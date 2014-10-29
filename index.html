@@ -3,10 +3,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Awesome Experiment</title>
+    <title>Balloon - A heaven Three.js experiment</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="styles/styles.css">
 </head>
-<body>	
+<body>
+
+    <div class="splash">
+        <h1>BALLOON</h1>
+
+        <a href="#" onclick="webgl.start()" >Launch</a>
+    </div>
+
     <div class="three"></div>
     <script src="assets/lib/dat-gui/build/dat.gui.min.js"></script>
 	<script src="assets/lib/jquery/dist/jquery.min.js"></script>
@@ -17,23 +27,33 @@
     <script src="build/app.min.js"></script>
 
     <script type="application/x-glsl" id="sky-vertex">
-varying vec2 vUV;
+        varying vec2 vUV;
 
-void main() {
-  vUV = uv;
-  vec4 pos = vec4(position, 1.0);
-  gl_Position = projectionMatrix * modelViewMatrix * pos;
-}
-</script>
+        void main() {
+          vUV = uv;
+          vec4 pos = vec4(position, 1.0);
+          gl_Position = projectionMatrix * modelViewMatrix * pos;
+        }
+        </script>
 
-<script type="application/x-glsl" id="sky-fragment">
-uniform sampler2D texture;
-varying vec2 vUV;
+        <script type="application/x-glsl" id="sky-fragment">
+        uniform sampler2D texture;
+        varying vec2 vUV;
 
-void main() {
-  vec4 sample = texture2D(texture, vUV);
-  gl_FragColor = vec4(sample.xyz, sample.w);
-}
-</script>
+        void main() {
+          vec4 sample = texture2D(texture, vUV);
+          gl_FragColor = vec4(sample.xyz, sample.w);
+        }
+    </script>
+
+    <audio id="wind-blow-sound" controls >
+      <source src="assets/sounds/blow3.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <audio id="wind-sound" autoplay loop>
+      <source src="assets/sounds/wind.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
 </body>
 </html>

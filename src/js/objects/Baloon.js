@@ -4,7 +4,7 @@ var Baloon = (function(){
         THREE.Object3D.call(this);
 
         var geometry = new THREE.SphereGeometry(160, 50, 50);
-        var material = new THREE.MeshPhongMaterial({color: 0x3facc8, wireframe: false});
+        var material = new THREE.MeshPhongMaterial({color: 0xffffff, wireframe: false});
 
         var cylinder = new THREE.CylinderGeometry(150, 60, 170, 32);
         var cylinderMesh = new THREE.Mesh(cylinder, material);
@@ -23,8 +23,8 @@ var Baloon = (function(){
         material.bumpScale = 15;
 
         // material.map.offset.set( 15, 15 );
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.add(this.mesh);
+        this.sphere = new THREE.Mesh(geometry, material);
+        this.add(this.sphere);
 
         this.rotation.x += Math.PI / 2;
     }

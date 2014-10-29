@@ -5,3 +5,29 @@ body, html {
     padding: 0;
     overflow: hidden;
 }
+
+.splash {
+	position: absolute;
+	z-index: 100;
+	top: 25%;
+	width: 100%;
+	text-align: center;
+	font-family: 'Waiting for the Sunrise', serif;
+	color: white;
+	font-size: 60px;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-stroke: 0.3px;
+	height: 100%;
+}
+
+.splash a {
+	text-decoration: none;
+	color: white;
+	font-size: 26px;
+	background: #c54a59; border-radius: 5px; width: 200px; display: block;
+	margin: auto;
+}
+
+.splash a:hover {
+	background: #d25a68;
+}

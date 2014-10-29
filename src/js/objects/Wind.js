@@ -4,11 +4,17 @@ var Wind = (function () {
 		this.strength = strength;
 		this.direction = direction;
 		this.aggressivity = aggressivity;
+		this.useParticles = true;
 	}
 
 	Wind.prototype.blowOnScene = function(scene) {
 		this.scene = scene;
 	};
+
+	Wind.prototype.applyWindBlow = function(vector, strength) {
+		var blow = new WindBlow(this.scene, this, vector, strength);
+		this.scene._main.ship.applyWindBlow(blow);
+	}
 
 	Wind.prototype.update = function() {
 		if (!this.scene) return;

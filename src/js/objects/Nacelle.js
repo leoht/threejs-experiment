@@ -4,7 +4,14 @@ var Nacelle = (function(){
         THREE.Object3D.call(this);
 
         var geometry = new THREE.CylinderGeometry(50, 30, 50, 32);
-        var material = new THREE.MeshLambertMaterial({color: 0x373328, wireframe: false});
+        var material = new THREE.MeshLambertMaterial({
+            color: 0xaaaaaa,
+            wireframe: false,
+            map: THREE.ImageUtils.loadTexture('assets/img/wicker.jpg')
+        });
+
+        // this.torch = new Torch();
+        // this.add(this.torch);
 
         this.add(new THREE.Mesh(geometry, material));
 
@@ -17,7 +24,7 @@ var Nacelle = (function(){
     Nacelle.prototype.constructor = Nacelle;
 
     Nacelle.prototype.update = function() {
-
+        // this.torch.update();
     };
 
     return Nacelle;

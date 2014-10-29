@@ -7,18 +7,35 @@ var Webgl = (function(){
     function Webgl(width, height){
         // Basic three.js setup
         this.scene = new THREE.Scene();
+
+        this.scene._main = this;
         
         this.camera = new THREE.PerspectiveCamera(50, width / height, 1, 100000);
         this.camera.position.y = INITIAL_ALTITUDE ;
-        this.camera.position.z = - 1000;
+        this.camera.position.z = -1000;
+        this.camera.position.x = 300;
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(width, height);
         this.renderer.setClearColor(0xdddddd, 0);
 
-        // Or create container classes for them to simplify your code
-        this.ship = new Ship();
-        this.ship.position.set(0, INITIAL_ALTITUDE, 0);
+        this.sky = new Sky(this);
+        this.scene.add(this.sky);
+
+        this.sceneLoaded = false;
+        this.started = false;
+
+        this.loadMainScene();
+    }
+
+    Webgl.prototype.loadMainScene = function() {
+
+        this.sceneLoaded = true;
+
+        this.ship = new Ship(this.camera);
+        this.ship.position.set(0, INITIAL_ALTITUDE - 1000, 0);
+        this.ship.enterScene();
+
         this.scene.add(this.ship);
 
         this.controls = new THREE.TrackballControls( this.camera );
@@ -47,9 +64,6 @@ var Webgl = (function(){
         var plane = new THREE.Mesh( geometry, material );
         plane.position.set(0, 0, 0);
         // this.scene.add( plane );
-
-        this.sky = new Sky();
-        this.scene.add(this.sky);
         
         this.mouseVector = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
@@ -63,17 +77,46 @@ var Webgl = (function(){
        var axisHelper = new THREE.AxisHelper( 10000 );
         this.scene.add( axisHelper );
 
-        var light = new THREE.PointLight( 0xffffff, 2, 100000 ); light.position.set( -5000, INITIAL_ALTITUDE + 3000, 0 ); this.scene.add( light );
+        var light = new THREE.PointLight( 0xf0e8a4, 1.5, 100000 ); light.position.set( -10000, INITIAL_ALTITUDE + 3000, 0 ); this.scene.add( light );
         this.hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.5 );  this.scene.add(this.hemiLight);
 
         var sphereSize = 20;
         var pointLightHelper = new THREE.PointLightHelper( light, sphereSize );
         this.scene.add( pointLightHelper );
-        // var light = new THREE.PointLight( 0xffffff, 2, 100000 ); light.position.set( 0, 800, 50 ); this.scene.add( light );
 
         this.wind = new Wind(0.5, new THREE.Vector3(8, 0, 0), 0.2);
         this.wind.blowOnScene(this.scene);
-    }
+
+        document.getElementById('wind-sound').addEventListener('ended', function(){
+            this.currentTime = 0;
+        }, false);
+    };
+
+    Webgl.prototype.start = function() {
+        this.started = true;
+
+        $('.splash').fadeOut(400);
+
+        window.addEventListener('keydown', function (e) {
+            if (e.which == 37 || e.which == 39) {
+                var audio = document.getElementById('wind-blow-sound');
+                audio.load();
+                audio.play();
+                var x = e.which == 37 ? 10 : -10;
+                setTimeout(function () {
+                    this.wind.applyWindBlow(new THREE.Vector3(x, 0, 0), 1);
+                }.bind(this), 100);
+            }
+
+            if (e.which == 38) {
+                this.ship.applyAscendingForce(5);
+            }
+
+            if (e.which == 40) {
+                this.ship.applyDescendingForce(5);
+            }
+        }.bind(this));
+    };
 
     Webgl.prototype.resize = function(width, height) {
         this.camera.aspect = width / height;
@@ -83,27 +126,24 @@ var Webgl = (function(){
 
     Webgl.prototype.render = function() {
 
-        this.camera.lookAt( this.ship.position );
-        // find intersections
-
-        // var vector = new THREE.Vector3( this.mouseVector.x, this.mouseVector.y, 1 ).unproject( this.camera );
-
-        // this.raycaster.set( this.camera.position, vector.sub( this.camera.position ).normalize() );
-
-        // var intersects = this.raycaster.intersectObjects( this.ship.spheres, true);
-
-        // if (intersects.length > 0) {
-        //     intersects[0].object.parent.scaling = true
-        // }
-
         this.renderer.render(this.scene, this.camera);
-        // this.composer.render();
-        this.controls.update();
-        this.ship.update();
-        this.sky.update();
-        this.wind.update();
+        
+        if (this.sceneLoaded) {
+            this.sky.update();
+            this.controls.update();
+            
+            this.wind.update();
 
-        // this.camera.position.z += 2;
+            this.camera.lookAt( this.ship.position );
+            this.ship.update();
+        }
+
+        if (this.started) {
+            this.ship.position.z += 2;
+            this.ship.position.y -= 0.1;
+            this.camera.position.z += 2;
+        }
+
     };
 
     return Webgl;
