@@ -1,6 +1,6 @@
 var Baloon = (function(){
 
-    function Baloon(){
+    function Baloon(id){
         THREE.Object3D.call(this);
 
         var geometry = new THREE.SphereGeometry(160, 50, 50);
@@ -12,7 +12,14 @@ var Baloon = (function(){
         cylinderMesh.rotation.y = Math.PI / 2;
         this.add(cylinderMesh);
 
-        var texture = THREE.ImageUtils.loadTexture("assets/img/baloon-texture.png");
+        if (!id) {
+            var url = "assets/img/baloon-texture.png";
+        } else {
+            var url = "assets/img/baloon-texture-"+id+".png";
+        }
+        
+
+        var texture = THREE.ImageUtils.loadTexture(url);
         texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
         
         texture.needsUpdate = true;

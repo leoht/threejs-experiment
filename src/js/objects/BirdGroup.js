@@ -3,7 +3,7 @@ var BirdGroup = (function(){
     function BirdGroup(directionVector){
         THREE.Object3D.call(this);
 
-        this.particleCount = 120;
+        this.particleCount = 180;
         this.particles = new THREE.Geometry();
         this.vector = directionVector;
 
@@ -14,7 +14,7 @@ var BirdGroup = (function(){
           transparent: true,
           side: THREE.DoubleSide,
           map: THREE.ImageUtils.loadTexture('assets/img/bird.png'),
-          size: 80
+          size: 50
         });
 
         this.pMaterialB = new THREE.PointCloudMaterial({
@@ -22,7 +22,7 @@ var BirdGroup = (function(){
           transparent: true,
           side: THREE.DoubleSide,
           map: THREE.ImageUtils.loadTexture('assets/img/bird2.png'),
-          size: 80
+          size: 50
         });
 
         this.pMaterialC = new THREE.PointCloudMaterial({
@@ -30,7 +30,7 @@ var BirdGroup = (function(){
           transparent: true,
           side: THREE.DoubleSide,
           map: THREE.ImageUtils.loadTexture('assets/img/bird3.png'),
-          size: 80
+          size: 50
         });
 
         this.pMaterialD = new THREE.PointCloudMaterial({
@@ -38,14 +38,14 @@ var BirdGroup = (function(){
           transparent: true,
           side: THREE.DoubleSide,
           map: THREE.ImageUtils.loadTexture('assets/img/bird4.png'),
-          size: 80
+          size: 50
         });
 
         // now create the individual particles
         for (var p = 0; p < this.particleCount; p++) {
 
-          var pX = Math.random() * 1000,
-              pY = Math.random() * 300,
+          var pX = Math.random() * 1400,
+              pY = Math.random() * 200,
               pZ = Math.random() * 800 ,
 
               particle = new THREE.Vector3(pX, pY, pZ);
@@ -104,9 +104,9 @@ var BirdGroup = (function(){
 
         // U-turn handling
 
-        if (this.particles.vertices[0].x >= 4000 || this.particles.vertices[0].x < -4000) this.vector.x = -this.vector.x;
-        if (this.particles.vertices[0].y >= 4000 || this.particles.vertices[0].y < -4000) this.vector.y = -this.vector.y;
-        if (this.particles.vertices[0].z >= 4000 || this.particles.vertices[0].z < -4000) this.vector.z = -this.vector.z;
+        // if (this.particles.vertices[0].x >= 7000 || this.particles.vertices[0].x < -7000) this.vector.x = -this.vector.x;
+        // if (this.particles.vertices[0].y >= 7000 || this.particles.vertices[0].y < -7000) this.vector.y = -this.vector.y;
+        // if (this.particles.vertices[0].z >= 7000 || this.particles.vertices[0].z < -7000) this.vector.z = -this.vector.z;
     };
 
     return BirdGroup;

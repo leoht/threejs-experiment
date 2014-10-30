@@ -14,7 +14,7 @@ var WindBlow = (function () {
 			this.constant = constant;
 		}
 
-		this.particleCount = 4000;
+		this.particleCount = 2000;
 		this.particles = new THREE.Geometry();
 	    var pMaterial = new THREE.PointCloudMaterial({
 	      color: 0xededed,
@@ -78,7 +78,7 @@ var WindBlow = (function () {
 			this._wind.useParticles = true;
 		}
 
-		this.particleSystem.material.opacity -= 0.005;
+		this.particleSystem.material.opacity -= 0.008;
 		this.particleSystem.material.needsUpdate = true;
 	};
 

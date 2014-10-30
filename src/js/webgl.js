@@ -9,11 +9,13 @@ var Webgl = (function(){
         this.scene = new THREE.Scene();
 
         this.scene._main = this;
+
+        this.score = 0;
         
         this.camera = new THREE.PerspectiveCamera(50, width / height, 1, 100000);
         this.camera.position.y = INITIAL_ALTITUDE ;
-        this.camera.position.z = -1000;
-        this.camera.position.x = 300;
+        this.camera.position.z = -1200;
+        this.camera.position.x = 700;
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(width, height);
@@ -25,6 +27,8 @@ var Webgl = (function(){
         this.sceneLoaded = false;
         this.started = false;
 
+        this.playingWindSound = false;
+
         this.loadMainScene();
     }
 
@@ -35,6 +39,26 @@ var Webgl = (function(){
         this.ship = new Ship(this.camera);
         this.ship.position.set(0, INITIAL_ALTITUDE - 1000, 0);
         this.ship.enterScene();
+
+        this.otherShips = [];
+
+        var ship2 = new Ship(null, 2, this);
+        ship2.position.set(-3000, INITIAL_ALTITUDE + 2000, 5000);
+        ship2.autoMoveVector = new THREE.Vector3(0, -0.1, 2.5);
+        this.scene.add(ship2);
+        this.otherShips.push(ship2);
+
+        var ship3 = new Ship(null, 3, this);
+        ship3.position.set(1000, INITIAL_ALTITUDE - 2000, 5000);
+        ship3.autoMoveVector = new THREE.Vector3(-0.5, 0.1, 1);
+        this.scene.add(ship3);
+        this.otherShips.push(ship3);
+
+        var ship4 = new Ship(null, 4, this);
+        ship4.position.set(-2000, INITIAL_ALTITUDE + 2000, -1000);
+        ship4.autoMoveVector = new THREE.Vector3(-0.2, -0.2, 4);
+        this.scene.add(ship4);
+        this.otherShips.push(ship4);
 
         this.scene.add(this.ship);
 
@@ -75,7 +99,7 @@ var Webgl = (function(){
         }.bind(this), false );
 
        var axisHelper = new THREE.AxisHelper( 10000 );
-        this.scene.add( axisHelper );
+        // this.scene.add( axisHelper );
 
         var light = new THREE.PointLight( 0xf0e8a4, 1.5, 100000 ); light.position.set( -10000, INITIAL_ALTITUDE + 3000, 0 ); this.scene.add( light );
         this.hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.5 );  this.scene.add(this.hemiLight);
@@ -87,35 +111,81 @@ var Webgl = (function(){
         this.wind = new Wind(0.5, new THREE.Vector3(8, 0, 0), 0.2);
         this.wind.blowOnScene(this.scene);
 
-        document.getElementById('wind-sound').addEventListener('ended', function(){
-            this.currentTime = 0;
+        var windSound = document.getElementById('wind-sound');
+        windSound.volume = 0.5;
+        windSound.addEventListener('ended', function(){
+            this.load();
         }, false);
+
+
     };
 
     Webgl.prototype.start = function() {
         this.started = true;
 
         $('.splash').fadeOut(400);
+        $('.controls').fadeIn(400);
+
+        this.sky.startDroppingCoins();
 
         window.addEventListener('keydown', function (e) {
             if (e.which == 37 || e.which == 39) {
                 var audio = document.getElementById('wind-blow-sound');
-                audio.load();
-                audio.play();
+
+                if (!this.playingWindSound) {
+                    audio.load();
+                    audio.play();
+                    this.playingWindSound = true;
+                    var gl = this;
+                    audio.addEventListener('ended', function () {
+                        gl.playingWindSound = false;
+                    });
+                }
+
                 var x = e.which == 37 ? 10 : -10;
+
+                if (e.which == 37) { $('.controls .left-arrow').css('opacity', 1); }
+                if (e.which == 39) { $('.controls .right-arrow').css('opacity', 1); }
+
                 setTimeout(function () {
                     this.wind.applyWindBlow(new THREE.Vector3(x, 0, 0), 1);
                 }.bind(this), 100);
             }
 
             if (e.which == 38) {
+                $('.controls .up-arrow').css('opacity', 1);
                 this.ship.applyAscendingForce(5);
             }
 
             if (e.which == 40) {
+                $('.controls .down-arrow').css('opacity', 1);
                 this.ship.applyDescendingForce(5);
             }
         }.bind(this));
+
+        window.addEventListener('keyup', function (e) {
+            if (e.which == 37) { $('.controls .left-arrow').css('opacity', 0.7); }
+            if (e.which == 39) { $('.controls .right-arrow').css('opacity', 0.7); }
+            if (e.which == 38) { $('.controls .up-arrow').css('opacity', 0.7); }
+            if (e.which == 40) { $('.controls .down-arrow').css('opacity', 0.7); }
+        })
+    };
+
+    Webgl.prototype.incrementScore = function(inc) {
+        this.previousScore = this.score;
+
+        var game = this;
+
+        this.scoreIncrementTimer = setInterval(function () {
+            game.score += 1;
+            var pad = "0000"
+            pad = pad.substring(0, pad.length - String(game.score).length) + String(game.score);
+            $('.controls .score span').text(pad);
+
+            if (game.previousScore + inc == game.score) {
+                clearInterval(game.scoreIncrementTimer);
+            }
+        }, 5);
     };
 
     Webgl.prototype.resize = function(width, height) {
@@ -136,6 +206,10 @@ var Webgl = (function(){
 
             this.camera.lookAt( this.ship.position );
             this.ship.update();
+
+            for (var i = 0 ; i < this.otherShips.length ; i++) {
+                this.otherShips[i].update();
+            }
         }
 
         if (this.started) {

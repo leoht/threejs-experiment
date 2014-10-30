@@ -23,11 +23,54 @@ body, html {
 .splash a {
 	text-decoration: none;
 	color: white;
-	font-size: 26px;
+	font-size: 22px;
 	background: #c54a59; border-radius: 5px; width: 200px; display: block;
-	margin: auto;
+	margin: 80px auto;
 }
 
 .splash a:hover {
 	background: #d25a68;
 }
+
+.controls { position: absolute; left: 100px; bottom: 20px; display: none; }
+
+.controls div {
+	width: 48px;
+	height: 48px;
+	float: left;
+	opacity: 0.5;
+	margin-left: 5px;
+}
+
+.controls .score {
+	color: white;
+	font-family: 'Waiting for the Sunrise', serif;
+	font-size: 28px;
+	position: absolute; bottom: 60px; right: 190px; z-index: 20;
+	opacity: 1; letter-spacing: 2px;
+}
+
+.controls .balloon {
+	background: url(../assets/img/balloon-icon.png);
+	width: 75px; height: 118px;
+	background-size: 75px 118px;
+	position: absolute; bottom: 5px; right: 220px;
+}
+
+.controls .up-arrow { background: url(../assets/img/arrow-up.png) no-repeat;  background-size: 48px 48px; position: relative; right: 106px; bottom: 55px;}
+.controls .down-arrow { background: url(../assets/img/arrow-down.png) no-repeat; background-size: 48px 48px; }
+.controls .left-arrow { background: url(../assets/img/arrow-left.png) no-repeat;  background-size: 48px 48px;}
+.controls .right-arrow { background: url(../assets/img/arrow-right.png) no-repeat; background-size: 48px 48px; }
+
+#loading-splash {
+	position: absolute; top: 0; left: 0;
+	width: 100%; height: 100%;
+	background: rgba(0, 0, 0, 0.9);
+	z-index: 100;
+
+	background-image: url(../assets/img/balloon-loader.png); 
+	background-repeat: no-repeat;
+	background-size: 75px 118px;
+	background-position: center;
+}
+

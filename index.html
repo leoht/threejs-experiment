@@ -11,13 +11,28 @@
 </head>
 <body>
 
+    
+
     <div class="splash">
         <h1>BALLOON</h1>
 
         <a href="#" onclick="webgl.start()" >Launch</a>
     </div>
 
+    <div class="controls">
+        <div class="left-arrow"></div>
+        <div class="down-arrow"></div>
+        <div class="right-arrow"></div>
+        <div class="up-arrow"></div>
+        <div class="score"><span>0000</span></div>
+        <div class="balloon"></div>
+    </div>
+
+    <div id="loading-splash"></div>
+
     <div class="three"></div>
+
+    <script src="http://code.createjs.com/preloadjs-0.4.1.min.js"></script>
     <script src="assets/lib/dat-gui/build/dat.gui.min.js"></script>
 	<script src="assets/lib/jquery/dist/jquery.min.js"></script>
     <script src="assets/lib/greensock/src/minified/TweenMax.min.js"></script>
@@ -48,12 +63,32 @@
 
     <audio id="wind-blow-sound" controls >
       <source src="assets/sounds/blow3.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
     </audio>
 
-    <audio id="wind-sound" autoplay loop>
+    <audio id="wind-sound" autoplay>
       <source src="assets/sounds/wind.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
     </audio>
+
+    <audio id="coin-sound"  >
+      <source src="assets/sounds/coin.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+         var queue = new createjs.LoadQueue();
+         queue.on("complete", handleComplete, this);
+         queue.loadManifest([
+             { id: '1', src:"assets/img/sky/negx.jpg" },
+             { id: '2', src:"assets/img/sky/negy.jpg" },
+             { id: '3', src:"assets/img/sky/negz.jpg" },
+             { id: '4', src:"assets/img/sky/posx.jpg" },
+             { id: '5', src:"assets/img/sky/posy.jpg" },
+             { id: '6', src:"assets/img/sky/posz.jpg" }
+         ]);
+         function handleComplete() {
+             setTimeout(function () {
+                $('#loading-splash').fadeOut(200);
+            }, 500);
+         }
+         </script>
 </body>
 </html>

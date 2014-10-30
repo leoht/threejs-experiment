@@ -1,13 +1,14 @@
 var Ship = (function(){
 
-    function Ship(camera){
+    function Ship(camera, id, main){
         THREE.Object3D.call(this);
 
-        this.baloon = new Baloon();
+        this.baloon = new Baloon(id);
         this.nacelle = new Nacelle();
         this.wires = [];
 
         this.camera = camera;
+        this._main = main;
 
         this.nacelle.position.set(0, 0, -300);
         this.rotation.x = - Math.PI / 2;
@@ -31,6 +32,26 @@ var Ship = (function(){
     Ship.prototype.constructor = Ship;
 
     Ship.prototype.update = function() {
+
+        // If the ship is autonomous (non playable),
+        // make it move along its directional vector
+        // and stay near the main ship so we can still see it
+        if (this.autoMoveVector) {
+            this.position.x += this.autoMoveVector.x;
+            this.position.y += this.autoMoveVector.y;
+            this.position.z += this.autoMoveVector.z;
+
+            // if ((this.position.x - this._main.ship.position.x >= 4000 && this.autoMoveVector.x > 0) || (this._main.ship.position.x - this.position.x <= 4000 && this.autoMoveVector.x < 0)) {
+            //     this.autoMoveVector.x = - this.autoMoveVector.x;
+            // }
+            // if ((this._main.ship.position.y - this.position.y >= 2500 && this.autoMoveVector.y > 0)  || (this._main.ship.position.y - this.position.y <= -2500 && this.autoMoveVector.y < 0)) {
+            //     this.autoMoveVector.y = - this.autoMoveVector.y;
+            // } 
+            // if ((this.position.z - this._main.ship.position.z >= 5000 && this.autoMoveVector.z > 0)  || (this._main.ship.position.z - this.position.z <= 5000 && this.autoMoveVector.z < 0)) {
+            //     this.autoMoveVector.z = - this.autoMoveVector.z;
+            // }
+        }
+
         this.baloon.update();
         this.nacelle.update();
 
@@ -140,6 +161,7 @@ var Ship = (function(){
         }
 
         if (this.nacelleNeedsReplace) {
+
             for (var i = 0 ; i < 4 ; i++) {
                 this.wires[i].geometry.vertices[1].x += this.nacelle.position.x < 0 ? 0.3 : -0.3;
                 this.wires[i].geometry.verticesNeedUpdate = true;
@@ -164,7 +186,7 @@ var Ship = (function(){
     Ship.prototype.simulateAscendingForce = function() {
         if (this.ascendingForce) {
 
-            console.log(this.ascendingForce);
+            // console.log(this.ascendingForce);
 
             if (this.originalAscendingForce > 0) {
                 this.baloon.rotation.x += 0.0004;
@@ -199,7 +221,7 @@ var Ship = (function(){
                 this.baloonNeedsReplace = true;
             }
 
-            this.camera.position.y -= 0.5;
+            if (this.camera) this.camera.position.y -= 0.5;
         }
 
         if (this.baloonNeedsReplace) {
@@ -215,7 +237,7 @@ var Ship = (function(){
             }
 
             // Update the camera slowly
-            this.camera.position.y += 3;
+            if (this.camera && this.camera.position.y <= this.position.y + 300) this.camera.position.y += 2;
         }
     };
 

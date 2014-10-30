@@ -7,6 +7,8 @@ var Sky = (function(){
 
         this.coins = [];
 
+        this.coinDropTimer = null
+
         var urlPrefix = "assets/img/sky/";
         var urls = [
             urlPrefix + "posx.jpg", urlPrefix + "negx.jpg",
@@ -38,7 +40,7 @@ var Sky = (function(){
           color: 0xededed,
           transparent: true,
           map: THREE.ImageUtils.loadTexture('assets/img/cloud.png'),
-          size: 2000
+          size: 1000
         });
 
         // now create the individual particles
@@ -83,6 +85,11 @@ var Sky = (function(){
         this.birdFlocks.push(birds);
         this.add(birds);
 
+        var birds = new BirdGroup(new THREE.Vector3(-1, 0, 2));
+        birds.position.set(-4000, -200, 300);
+        this.birdFlocks.push(birds);
+        this.add(birds);
+
         // for (var i = 0 ; i < 4 ; i++) {
         //     var birds = new BirdGroup(new THREE.Vector3(
         //         Math.floor(Math.random() * 8) - 2, 
@@ -102,9 +109,6 @@ var Sky = (function(){
         //     this.birdFlocks.push(birds);
         // }
 
-        setInterval(function () {
-            this.dropCoin(new THREE.Vector3(0, 7000, this._main.ship.position.z + 1500));
-        }.bind(this), 5000);
 
     };
 
@@ -112,6 +116,18 @@ var Sky = (function(){
 
     Sky.prototype = new THREE.Object3D;
     Sky.prototype.constructor = Sky;
+
+    Sky.prototype.startDroppingCoins = function () {
+        this.coinDropTimer = setInterval(function () {
+
+            // Drop a coin above the ship route so we can catch it
+            this.dropCoin(new THREE.Vector3(
+                Math.floor(Math.random() * 2000) - 1000,
+                this._main.ship.position.y + 2000,
+                this._main.ship.position.z + 1400)
+            );
+        }.bind(this), 5000);
+    }
 
     Sky.prototype.dropCoin = function(start) {
         var coin = new Coin();
@@ -123,6 +139,12 @@ var Sky = (function(){
         coin.startFalling();
         this.coins.push(coin);
         this.add(coin);
+
+        var game = this._main;
+
+        coin.onCatch(function () {
+            game.incrementScore(100);
+        });
     };
 
     Sky.prototype.update = function() {
